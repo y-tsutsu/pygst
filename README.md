@@ -66,6 +66,13 @@ $ pip install pygobject
 $ python3 hello.py
 ```
 
+## その他
+
+### 参考URL
+
+[http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html](http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html)  
+[https://lazka.github.io/pgi-docs/Gst-1.0/classes.html](https://lazka.github.io/pgi-docs/Gst-1.0/classes.html)
+
 # C言語からGSdtreamerを呼び出す
 
 ## インストール
