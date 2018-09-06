@@ -29,14 +29,11 @@ $ gst-launch-1.0 v4l2src ! videoconvert ! ximagesink
 保存
 
 ```console
-$ timeout 30 gst-launch-1.0 -v v4l2src \
-! videorate \
-! video/x-raw,framerate=30/1 \
-! clockoverlay \
+$ gst-launch-1.0 v4l2src num-buffers=500 \
+! queue \
 ! x264enc \
-! h264parse \
-! mpegtsmux \
-! filesink location=`date -I`.ts
+! mp4mux \
+! filesink location=video.mp4
 ```
 
 ## その他
