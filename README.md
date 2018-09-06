@@ -46,6 +46,20 @@ VMwareでカメラが接続できない場合は、接続設定を行った上�
 
 [http://littlewing.hatenablog.com/entry/2016/02/24/200129](http://littlewing.hatenablog.com/entry/2016/02/24/200129)
 
+# C言語からGSdtreamerを呼び出す
+
+## インストール
+
+```console
+$ sudo apt install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools
+```
+
+## その他
+
+### 参考URL
+
+[https://gstreamer.freedesktop.org/documentation/tutorials/basic/hello-world.html](https://gstreamer.freedesktop.org/documentation/tutorials/basic/hello-world.html)
+
 # PythonからGStreamerを呼び出す
 
 動的にパイプを組み替えたい（逆走検知時に別に動画を保存したい）ために、gst-launchを直接使うのではなくPythonのコードからGStreamerを使用したい。
@@ -63,23 +77,15 @@ $ pip install pygobject
 $ python3 hello.py
 ```
 
-## その他
-
-### 参考URL
-
-[http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html](http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html)  
-[https://lazka.github.io/pgi-docs/Gst-1.0/classes.html](https://lazka.github.io/pgi-docs/Gst-1.0/classes.html)
-
-# C言語からGSdtreamerを呼び出す
-
-## インストール
+## USB画像層をMP4に保存するコード
 
 ```console
-$ sudo apt install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools
+$ python3 usbcam_save.py
 ```
 
 ## その他
 
 ### 参考URL
 
-[https://gstreamer.freedesktop.org/documentation/tutorials/basic/hello-world.html](https://gstreamer.freedesktop.org/documentation/tutorials/basic/hello-world.html)
+[http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html](http://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html)  
+[https://lazka.github.io/pgi-docs/Gst-1.0/classes.html](https://lazka.github.io/pgi-docs/Gst-1.0/classes.html)
