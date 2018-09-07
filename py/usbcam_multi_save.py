@@ -8,6 +8,8 @@ from gi.repository import GObject, Gst, GLib
 osel_src1 = None
 osel_src2 = None
 
+SWITCH_TIMEOUT_SEC = 10
+
 
 def my_bus_callback(bus, message, loop):
     t = message.type
@@ -31,7 +33,6 @@ def switch_cb(user_data):
     else:
         new_pad = osel_src1
     sel.set_property('active-pad', new_pad)
-
     return True
 
 
@@ -49,7 +50,7 @@ def main():
 
     pipline = Gst.Pipeline.new('pipeline')
 
-    src = Gst.ElementFactory.make('videotestsrc', 'src')
+    src = Gst.ElementFactory.make('v4l2src', 'src')
     c0 = Gst.ElementFactory.make('videoconvert', None)
     toverlay = Gst.ElementFactory.make('timeoverlay', 'timeoverlay')
     osel = Gst.ElementFactory.make('output-selector', 'osel')
@@ -70,9 +71,6 @@ def main():
     pipline.add(c2)
     pipline.add(sink2)
 
-    src.set_property('is-live', True)
-    src.set_property('do-timestamp', True)
-    src.set_property('num-buffers', 500)
     osel.set_property('resend-latest', True)
 
     sink1.connect('element-added', on_bin_element_added)
@@ -98,8 +96,7 @@ def main():
 
     c2.link(sink2)
 
-    SWITCH_TIMEOUT = 1
-    GObject.timeout_add_seconds(SWITCH_TIMEOUT, switch_cb, osel)
+    GObject.timeout_add_seconds(SWITCH_TIMEOUT_SEC, switch_cb, osel)
 
     bus = pipline.get_bus()
     bus.add_watch(0, my_bus_callback, loop)
