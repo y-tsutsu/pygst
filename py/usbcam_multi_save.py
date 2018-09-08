@@ -50,51 +50,49 @@ def main():
 
     pipline = Gst.Pipeline.new('pipeline')
 
-    src = Gst.ElementFactory.make('v4l2src', 'src')
+    src = Gst.ElementFactory.make('videotestsrc', 'src')
     c0 = Gst.ElementFactory.make('videoconvert', None)
     toverlay = Gst.ElementFactory.make('timeoverlay', 'timeoverlay')
+    enc = Gst.ElementFactory.make('x264enc', 'enc')
     osel = Gst.ElementFactory.make('output-selector', 'osel')
-    c1 = Gst.ElementFactory.make('videoconvert', None)
-    c2 = Gst.ElementFactory.make('videoconvert', None)
-    sink1 = Gst.ElementFactory.make('autovideosink', 'sink1')
-    sink2 = Gst.ElementFactory.make('autovideosink', 'sink2')
+    sink1 = Gst.ElementFactory.make('filesink', 'sink1')
+    sink2 = Gst.ElementFactory.make('filesink', 'sink2')
 
-    if not pipline or not src or not c0 or not toverlay or not osel or not c1 or not c2 or not sink1 or not sink2:
+    if not pipline or not src or not c0 or not toverlay or not osel or not sink1 or not sink2:
         sys.exit('missing element')
 
     pipline.add(src)
     pipline.add(c0)
     pipline.add(toverlay)
+    pipline.add(enc)
     pipline.add(osel)
-    pipline.add(c1)
     pipline.add(sink1)
-    pipline.add(c2)
     pipline.add(sink2)
 
     osel.set_property('resend-latest', True)
-
-    sink1.connect('element-added', on_bin_element_added)
-    sink2.connect('element-added', on_bin_element_added)
+    sink1.set_property('location', dt.now().strftime('%Y_%m_%d') + '_1.mp4')
+    sink2.set_property('location', dt.now().strftime('%Y_%m_%d') + '_2.mp4')
+    sink1.set_property('sync', False)
+    sink2.set_property('sync', False)
+    sink1.set_property('async', False)
+    sink2.set_property('async', False)
 
     src.link(c0)
     c0.link(toverlay)
-    toverlay.link(osel)
+    toverlay.link(enc)
+    enc.link(osel)
 
-    sinkpad = c1.get_static_pad('sink')
+    sinkpad = sink1.get_static_pad('sink')
     osel_src1 = osel.get_request_pad('src_%u')
 
     if osel_src1.link(sinkpad) != Gst.PadLinkReturn.OK:
         sys.exit('linking output 1 converter failed')
 
-    c1.link(sink1)
-
-    sinkpad = c2.get_static_pad('sink')
+    sinkpad = sink2.get_static_pad('sink')
     osel_src2 = osel.get_request_pad('src_%u')
 
     if osel_src2.link(sinkpad) != Gst.PadLinkReturn.OK:
         sys.exit('linking output 2 converter failed')
-
-    c2.link(sink2)
 
     GObject.timeout_add_seconds(SWITCH_TIMEOUT_SEC, switch_cb, osel)
 
