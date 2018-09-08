@@ -26,17 +26,12 @@ def my_bus_callback(bus, message, loop):
 
 
 def switch_cb(user_data):
-    print('!!!')
-
-    sel, sink1, sink2 = user_data
+    sel = user_data
     old_pad = sel.get_property('active-pad')
-    new_pad = osel_src2 if old_pad == osel_src1 else osel_src1
-
-    new_sink = sink2 if old_pad == osel_src1 else sink1
-    new_sink.set_state(Gst.State.NULL)
-    new_sink.set_property('location', dt.now().strftime('%Y_%m_%d_%H_%M_%S') + '.mp4')
-    new_sink.set_state(Gst.State.PLAYING)
-
+    if old_pad == osel_src1:
+        new_pad = osel_src2
+    else:
+        new_pad = osel_src1
     sel.set_property('active-pad', new_pad)
     return True
 
@@ -75,8 +70,8 @@ def main():
     pipline.add(sink2)
 
     osel.set_property('resend-latest', True)
-    sink1.set_property('location', dt.now().strftime('%Y_%m_%d_%H_%M_%S') + '.mp4')
-    sink2.set_property('location', dt.now().strftime('%Y_%m_%d_%H_%M_%S') + '.mp4')
+    sink1.set_property('location', dt.now().strftime('%Y_%m_%d') + '_1.mp4')
+    sink2.set_property('location', dt.now().strftime('%Y_%m_%d') + '_2.mp4')
     sink1.set_property('sync', False)
     sink2.set_property('sync', False)
     sink1.set_property('async', False)
@@ -99,7 +94,7 @@ def main():
     if osel_src2.link(sinkpad) != Gst.PadLinkReturn.OK:
         sys.exit('linking output 2 converter failed')
 
-    GObject.timeout_add_seconds(SWITCH_TIMEOUT_SEC, switch_cb, (osel, sink1, sink2))
+    GObject.timeout_add_seconds(SWITCH_TIMEOUT_SEC, switch_cb, osel)
 
     bus = pipline.get_bus()
     bus.add_watch(0, my_bus_callback, loop)
